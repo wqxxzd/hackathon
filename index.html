@@ -8,62 +8,120 @@
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
+<div id="map_visualization"></div>
 
+
+<!-- Styles -->
+<style>
+#map_visualization {
+  width: 100%;
+  height: 500px
+}
+
+</style>
+
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/maps.js"></script>
+<script src="https://www.amcharts.com/lib/4/geodata/usaLow.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dataviz.js"></script>
+
+<!-- Chart code -->
 <script>
+am4core.ready(function() {
 
-// set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 30, left: 30},
-  width = 450 - margin.left - margin.right,
-  height = 450 - margin.top - margin.bottom;
+// Themes begin
+am4core.useTheme(am4themes_dataviz);
+am4core.useTheme(am4themes_animated);
+// Themes end
 
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-.append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-.append("g")
-  .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
+ // Create map instance
+var chart = am4core.create("map_visualization", am4maps.MapChart);
 
-// Labels of row and columns
-var myGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-var myVars = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
+// Set map definition
+chart.geodata = am4geodata_usaLow;
 
-// Build X scales and axis:
-var x = d3.scaleBand()
-  .range([ 0, width ])
-  .domain(myGroups)
-  .padding(0.01);
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x))
+// Set projection
+chart.projection = new am4maps.projections.AlbersUsa();
 
-// Build X scales and axis:
-var y = d3.scaleBand()
-  .range([ height, 0 ])
-  .domain(myVars)
-  .padding(0.01);
-svg.append("g")
-  .call(d3.axisLeft(y));
+// Create map polygon series
+var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
 
-// Build color scale
-var myColor = d3.scaleLinear()
-  .range(["white", "#69b3a2"])
-  .domain([1,100])
+//Set min/max fill color for each area
+polygonSeries.heatRules.push({
+  property: "fill",
+  target: polygonSeries.mapPolygons.template,
+  min: chart.colors.getIndex(1).brighten(1),
+  max: chart.colors.getIndex(1).brighten(-0.3)
+});
 
-//Read the data
-d3.csv("heatmap_data.csv", function(data) {
+// Make map load polygon data (state shapes and names) from GeoJSON
+polygonSeries.useGeodata = true;
 
-  svg.selectAll()
-      .data(data, function(d) {return d.group+':'+d.variable;})
-      .enter()
-      .append("rect")
-      .attr("x", function(d) { return x(d.group) })
-      .attr("y", function(d) { return y(d.variable) })
-      .attr("width", x.bandwidth() )
-      .attr("height", y.bandwidth() )
-      .style("fill", function(d) { return myColor(d.value)} )
 
+
+// Set heatmap values for each state
+
+
+d3.csv("data.csv", function(data){
+    var data = d3.nest().key(
+        function(d) {return d.State;}
+    )
+    .rollup(function(d){
+        return d3.sum(d, function(g) {return 1;})
+    }).entries(data)
+    console.log(data)
+    var dict = [];
+
+    data.forEach(addToPolygonSeries);
+    function addToPolygonSeries(v, index, array){
+      var idString = "US-" + v.key;
+      var numberOfAccidents = v.value;
+      dict.push({
+        id: idString,
+        value: numberOfAccidents
+      })
+    }
+    console.log(dict);
+    polygonSeries.data = dict;
+    console.log(polygonSeries.data);
 })
 
+
+// Set up heat legend
+let heatLegend = chart.createChild(am4maps.HeatLegend);
+heatLegend.series = polygonSeries;
+heatLegend.align = "right";
+heatLegend.valign = "bottom";
+heatLegend.width = am4core.percent(20);
+heatLegend.marginRight = am4core.percent(4);
+heatLegend.minValue = 0;
+heatLegend.maxValue = 500000;
+
+// Set up custom heat map legend labels using axis ranges
+var minRange = heatLegend.valueAxis.axisRanges.create();
+minRange.value = heatLegend.minValue;
+minRange.label.text = "Little";
+var maxRange = heatLegend.valueAxis.axisRanges.create();
+maxRange.value = heatLegend.maxValue;
+maxRange.label.text = "A lot!";
+
+// Blank out internal heat legend value axis labels
+heatLegend.valueAxis.renderer.labels.template.adapter.add("text", function(labelText) {
+  return "";
+});
+
+// Configure series tooltip
+var polygonTemplate = polygonSeries.mapPolygons.template;
+polygonTemplate.tooltipText = "{name}: {value}";
+polygonTemplate.nonScalingStroke = true;
+polygonTemplate.strokeWidth = 0.5;
+
+// Create hover state and set alternative fill color
+var hs = polygonTemplate.states.create("hover");
+hs.properties.fill = am4core.color("#ff0000");
+
+}); // end am4core.ready()
 </script>
