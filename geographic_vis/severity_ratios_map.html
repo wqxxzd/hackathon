@@ -1,0 +1,126 @@
+Ratios of severe accidents by US States
+
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px
+}
+
+</style>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/maps.js"></script>
+<script src="https://www.amcharts.com/lib/4/geodata/usaLow.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dataviz.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_dataviz);
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+ // Create map instance
+var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+// Set map definition
+chart.geodata = am4geodata_usaLow;
+
+// Set projection
+chart.projection = new am4maps.projections.AlbersUsa();
+
+// Create map polygon series
+var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+//Set min/max fill color for each area
+polygonSeries.heatRules.push({
+  property: "fill",
+  target: polygonSeries.mapPolygons.template,
+  min: chart.colors.getIndex(1).brighten(1),
+  max: chart.colors.getIndex(1).brighten(-0.3)
+});
+
+// Make map load polygon data (state shapes and names) from GeoJSON
+polygonSeries.useGeodata = true;
+
+
+
+// Set heatmap values for each state
+polygon_data = []
+ratios_data = '[{"id":"US-OH","value":0.39893709327548804},{"id":"US-WV","value":0.41465914915427987},{"id":"US-CA","value":0.3841524553028021},{"id":"US-FL","value":0.3533776550791594},{"id":"US-GA","value":0.5985563575791227},{"id":"US-SC","value":0.23756131744919412},{"id":"US-NE","value":0.15852649006622516},{"id":"US-IA","value":0.5415067178502879},{"id":"US-IL","value":0.3050864004686127},{"id":"US-MO","value":0.5558471598238512},{"id":"US-WI","value":0.5147469729897547},{"id":"US-IN","value":0.35290952735700687},{"id":"US-MI","value":0.4137348909446958},{"id":"US-NJ","value":0.33715857829772466},{"id":"US-NY","value":0.42852269173545104},{"id":"US-CT","value":0.5323391062646996},{"id":"US-MA","value":0.39576946658491724},{"id":"US-RI","value":0.5328994938539408},{"id":"US-NH","value":0.1904165921687824},{"id":"US-PA","value":0.24285751971931305},{"id":"US-KY","value":0.5479113694151835},{"id":"US-MD","value":0.557686143086114},{"id":"US-VA","value":0.4780874548236903},{"id":"US-DC","value":0.3811571540265833},{"id":"US-DE","value":0.25832266325224074},{"id":"US-TX","value":0.28212778313141473},{"id":"US-WA","value":0.373553882725832},{"id":"US-OR","value":0.16062492658287325},{"id":"US-AL","value":0.398857816253456},{"id":"US-TN","value":0.3553127354935946},{"id":"US-NC","value":0.144028425575673},{"id":"US-MN","value":0.52375},{"id":"US-KS","value":0.507655851257747},{"id":"US-OK","value":0.1009313766133267},{"id":"US-LA","value":0.20525391290669323},{"id":"US-CO","value":0.42825828503492347},{"id":"US-UT","value":0.37269515767706357},{"id":"US-AZ","value":0.26140839879293265},{"id":"US-NM","value":0.4160452558498329},{"id":"US-NV","value":0.3763702801461632},{"id":"US-VT","value":0.2679425837320574},{"id":"US-MS","value":0.46271260357610117},{"id":"US-AR","value":0.5682041216879293},{"id":"US-MT","value":0.49078341013824883},{"id":"US-ME","value":0.0810126582278481},{"id":"US-ND","value":0.4594594594594595},{"id":"US-WY","value":0.7351598173515982},{"id":"US-ID","value":0.21597633136094674},{"id":"US-SD","value":0.6363636363636364}]'
+ratios_data = JSON.parse(ratios_data)
+ratios_data.forEach(element => {
+  polygon_data.push(element)
+});
+polygonSeries.data = ratios_data;
+
+// d3.csv("data.csv", function(data){
+//     var data = d3.nest().key(
+//         function(d) {return d.State;}
+//     )
+//     .rollup(function(d){
+//         return d3.sum(d, function(g) {return parseInt(g.Severity) > 2 ? 1:0;})
+//     }).entries(data)
+//     console.log(data)
+//     var dict = [];
+
+//     data.forEach(addToPolygonSeries);
+//     function addToPolygonSeries(v, index, array){
+//       var idString = "US-" + v.key;
+//       var numberOfAccidents = v.value;
+//       dict.push({
+//         id: idString,
+//         value: numberOfAccidents
+//       })
+//     }
+//     console.log(dict);
+//     polygonSeries.data = dict;
+//     console.log(polygonSeries.data);
+// })
+
+
+// Set up heat legend
+let heatLegend = chart.createChild(am4maps.HeatLegend);
+heatLegend.series = polygonSeries;
+heatLegend.align = "right";
+heatLegend.valign = "bottom";
+heatLegend.width = am4core.percent(20);
+heatLegend.marginRight = am4core.percent(4);
+heatLegend.minValue = 0;
+heatLegend.maxValue = 500000;
+
+// Set up custom heat map legend labels using axis ranges
+var minRange = heatLegend.valueAxis.axisRanges.create();
+minRange.value = heatLegend.minValue;
+minRange.label.text = "0";
+var maxRange = heatLegend.valueAxis.axisRanges.create();
+maxRange.value = heatLegend.maxValue;
+maxRange.label.text = "1";
+
+// Blank out internal heat legend value axis labels
+heatLegend.valueAxis.renderer.labels.template.adapter.add("text", function(labelText) {
+  return "";
+});
+
+// Configure series tooltip
+var polygonTemplate = polygonSeries.mapPolygons.template;
+polygonTemplate.tooltipText = "{name}: {value}";
+polygonTemplate.nonScalingStroke = true;
+polygonTemplate.strokeWidth = 0.5;
+
+// Create hover state and set alternative fill color
+var hs = polygonTemplate.states.create("hover");
+hs.properties.fill = am4core.color("#ff0000");
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>

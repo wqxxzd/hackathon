@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        var number_accidents = '[{"key":"OH","value":46100},{"key":"WV","value":1951},{"key":"CA","value":484706},{"key":"FL","value":177490},{"key":"GA","value":66637},{"key":"SC","value":99890},{"key":"NE","value":19328},{"key":"IA","value":8336},{"key":"IL","value":71701},{"key":"MO","value":22481},{"key":"WI","value":12884},{"key":"IN","value":24162},{"key":"MI","value":74045},{"key":"NJ","value":40346},{"key":"NY","value":105523},{"key":"CT","value":18708},{"key":"MA","value":26096},{"key":"RI","value":8298},{"key":"NH","value":5593},{"key":"PA","value":75814},{"key":"KY","value":13765},{"key":"MD","value":34315},{"key":"VA","value":61426},{"key":"DC","value":2558},{"key":"DE","value":3124},{"key":"TX","value":237637},{"key":"WA","value":50480},{"key":"OR","value":42565},{"key":"AL","value":22063},{"key":"TN","value":42464},{"key":"NC","value":108916},{"key":"MN","value":40000},{"key":"KS","value":5486},{"key":"OK","value":36183},{"key":"LA","value":38143},{"key":"CO","value":26916},{"key":"UT","value":23212},{"key":"AZ","value":43411},{"key":"NM","value":3889},{"key":"NV","value":7389},{"key":"VT","value":418},{"key":"MS","value":4586},{"key":"AR","value":1019},{"key":"MT","value":434},{"key":"ME","value":1580},{"key":"ND","value":37},{"key":"WY","value":438},{"key":"ID","value":1352},{"key":"SD","value":44}]'
+        var severe_accidents = '[{"key":"OH","value":18391},{"key":"WV","value":809},{"key":"CA","value":186201},{"key":"FL","value":62721},{"key":"GA","value":39886},{"key":"SC","value":23730},{"key":"NE","value":3064},{"key":"IA","value":4514},{"key":"IL","value":21875},{"key":"MO","value":12496},{"key":"WI","value":6632},{"key":"IN","value":8527},{"key":"MI","value":30635},{"key":"NJ","value":13603},{"key":"NY","value":45219},{"key":"CT","value":9959},{"key":"MA","value":10328},{"key":"RI","value":4422},{"key":"NH","value":1065},{"key":"PA","value":18412},{"key":"KY","value":7542},{"key":"MD","value":19137},{"key":"VA","value":29367},{"key":"DC","value":975},{"key":"DE","value":807},{"key":"TX","value":67044},{"key":"WA","value":18857},{"key":"OR","value":6837},{"key":"AL","value":8800},{"key":"TN","value":15088},{"key":"NC","value":15687},{"key":"MN","value":20950},{"key":"KS","value":2785},{"key":"OK","value":3652},{"key":"LA","value":7829},{"key":"CO","value":11527},{"key":"UT","value":8651},{"key":"AZ","value":11348},{"key":"NM","value":1618},{"key":"NV","value":2781},{"key":"VT","value":112},{"key":"MS","value":2122},{"key":"AR","value":579},{"key":"MT","value":213},{"key":"ME","value":128},{"key":"ND","value":17},{"key":"WY","value":322},{"key":"ID","value":292},{"key":"SD","value":28}]'
+        
+        number_accidents = JSON.parse(number_accidents);
+        severe_accidents = JSON.parse(severe_accidents);
+
+        var ratio = []
+
+        severe_accidents.forEach(computeFrequency);
+
+        function computeFrequency(state){
+            // Find the correct state in number_accidents array
+            number_accidents.forEach(element => {
+                if (element.key == state.key) {
+                    var id_string = "US-" + state.key;
+                    var frequency_value = state.value/element.value;
+                    // frequency_value = frequency_value.toString();
+                    ratio.push(
+                        {
+                            id: id_string,
+                            value:frequency_value
+                        }
+                    )
+                    return;
+                }
+            });
+        }
+        console.log("FREQUENCY:")
+        console.log(ratio)
+        console.log(JSON.stringify(ratio))
+    </script>
+</body>
+</html>

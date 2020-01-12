@@ -1,0 +1,132 @@
+Number of accidents by US States
+
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px
+}
+
+</style>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/maps.js"></script>
+<script src="https://www.amcharts.com/lib/4/geodata/usaLow.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dataviz.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_dataviz);
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+ // Create map instance
+var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+// Set map definition
+chart.geodata = am4geodata_usaLow;
+
+// Set projection
+chart.projection = new am4maps.projections.AlbersUsa();
+
+// Create map polygon series
+var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+//Set min/max fill color for each area
+polygonSeries.heatRules.push({
+  property: "fill",
+  target: polygonSeries.mapPolygons.template,
+  min: chart.colors.getIndex(1).brighten(1),
+  max: chart.colors.getIndex(1).brighten(-0.3)
+});
+
+// Make map load polygon data (state shapes and names) from GeoJSON
+polygonSeries.useGeodata = true;
+
+
+
+// Set heatmap values for each state
+polygon_data = []
+var number_accidents = '[{"key":"OH","value":46100},{"key":"WV","value":1951},{"key":"CA","value":484706},{"key":"FL","value":177490},{"key":"GA","value":66637},{"key":"SC","value":99890},{"key":"NE","value":19328},{"key":"IA","value":8336},{"key":"IL","value":71701},{"key":"MO","value":22481},{"key":"WI","value":12884},{"key":"IN","value":24162},{"key":"MI","value":74045},{"key":"NJ","value":40346},{"key":"NY","value":105523},{"key":"CT","value":18708},{"key":"MA","value":26096},{"key":"RI","value":8298},{"key":"NH","value":5593},{"key":"PA","value":75814},{"key":"KY","value":13765},{"key":"MD","value":34315},{"key":"VA","value":61426},{"key":"DC","value":2558},{"key":"DE","value":3124},{"key":"TX","value":237637},{"key":"WA","value":50480},{"key":"OR","value":42565},{"key":"AL","value":22063},{"key":"TN","value":42464},{"key":"NC","value":108916},{"key":"MN","value":40000},{"key":"KS","value":5486},{"key":"OK","value":36183},{"key":"LA","value":38143},{"key":"CO","value":26916},{"key":"UT","value":23212},{"key":"AZ","value":43411},{"key":"NM","value":3889},{"key":"NV","value":7389},{"key":"VT","value":418},{"key":"MS","value":4586},{"key":"AR","value":1019},{"key":"MT","value":434},{"key":"ME","value":1580},{"key":"ND","value":37},{"key":"WY","value":438},{"key":"ID","value":1352},{"key":"SD","value":44}]'
+number_accidents = JSON.parse(number_accidents)
+
+polygon_data = []
+number_accidents.forEach(element => {
+  polygon_data.push({
+    id: "US-" + element.key,
+    value: element.value
+  })
+})
+
+polygonSeries.data = polygon_data;
+
+// d3.csv("data.csv", function(data){
+//     var data = d3.nest().key(
+//         function(d) {return d.State;}
+//     )
+//     .rollup(function(d){
+//         return d3.sum(d, function(g) {return parseInt(g.Severity) > 2 ? 1:0;})
+//     }).entries(data)
+//     console.log(data)
+//     var dict = [];
+
+//     data.forEach(addToPolygonSeries);
+//     function addToPolygonSeries(v, index, array){
+//       var idString = "US-" + v.key;
+//       var numberOfAccidents = v.value;
+//       dict.push({
+//         id: idString,
+//         value: numberOfAccidents
+//       })
+//     }
+//     console.log(dict);
+//     polygonSeries.data = dict;
+//     console.log(polygonSeries.data);
+// })
+
+
+// Set up heat legend
+let heatLegend = chart.createChild(am4maps.HeatLegend);
+heatLegend.series = polygonSeries;
+heatLegend.align = "right";
+heatLegend.valign = "bottom";
+heatLegend.width = am4core.percent(20);
+heatLegend.marginRight = am4core.percent(4);
+heatLegend.minValue = 0;
+heatLegend.maxValue = 500000;
+
+// Set up custom heat map legend labels using axis ranges
+var minRange = heatLegend.valueAxis.axisRanges.create();
+minRange.value = heatLegend.minValue;
+minRange.label.text = "0";
+var maxRange = heatLegend.valueAxis.axisRanges.create();
+maxRange.value = heatLegend.maxValue;
+maxRange.label.text = "500,000";
+
+// Blank out internal heat legend value axis labels
+heatLegend.valueAxis.renderer.labels.template.adapter.add("text", function(labelText) {
+  return "";
+});
+
+// Configure series tooltip
+var polygonTemplate = polygonSeries.mapPolygons.template;
+polygonTemplate.tooltipText = "{name}: {value}";
+polygonTemplate.nonScalingStroke = true;
+polygonTemplate.strokeWidth = 0.5;
+
+// Create hover state and set alternative fill color
+var hs = polygonTemplate.states.create("hover");
+hs.properties.fill = am4core.color("#ff0000");
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
