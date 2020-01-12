@@ -1,0 +1,410 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<div id="map_visualization"></div>
+
+<title>Map visualization of states with number of accidents</title>
+
+<!-- Styles -->
+<style>
+#map_visualization {
+  width: 100%;
+  height: 500px
+}
+
+</style>
+
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/maps.js"></script>
+<script src="https://www.amcharts.com/lib/4/geodata/usaLow.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dataviz.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!-- Chart code -->
+<link rel="stylesheet" src="custom.css">
+<script>
+
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_dataviz);
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+ // Create map instance
+var chart = am4core.create("map_visualization", am4maps.MapChart);
+
+// Set map definition
+chart.geodata = am4geodata_usaLow;
+
+// Set projection
+chart.projection = new am4maps.projections.AlbersUsa();
+
+// Create map polygon series
+var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+//Set min/max fill color for each area
+polygonSeries.heatRules.push({
+  property: "fill",
+  target: polygonSeries.mapPolygons.template,
+  min: chart.colors.getIndex(1).brighten(1),
+  max: chart.colors.getIndex(1).brighten(-0.3)
+});
+
+// Make map load polygon data (state shapes and names) from GeoJSON
+polygonSeries.useGeodata = true;
+
+
+
+polygonSeries.data = [
+
+  {
+    id: "US-OH",
+    value: 46100
+  },
+  {
+    id: "US-WV",
+    value: 1951
+  },
+  {
+    id: "US-CA",
+    value: 484706
+  },
+  {
+    id: "US-FL",
+    value: 177490
+  },
+  {
+    id: "US-GA",
+    value: 66637
+  },
+  {
+    id: "US-SC",
+    value: 99890
+  },
+  {
+    id: "US-NE",
+    value: 19328
+  },
+  {
+    id: "US-IA",
+    value: 8336
+  },
+  {
+    id: "US-IL",
+    value: 71701
+  },
+  {
+    id: "US-MO",
+    value: 22481
+  },
+  {
+    id: "US-WI",
+    value: 12884
+  },
+  {
+    id: "US-IN",
+    value: 24162
+  },
+  {
+    id: "US-MI",
+    value: 74045
+  },
+  {
+    id: "US-NJ",
+    value: 40346
+  },
+  {
+    id: "US-NY",
+    value: 105523
+  },
+  {
+    id: "US-CT",
+    value: 18708
+  },
+  {
+    id: "US-MA",
+    value: 26096
+  },
+  {
+    id: "US-RI",
+    value: 8298
+  },
+  {
+    id: "US-NH",
+    value: 5593
+  },
+  {
+    id: "US-PA",
+    value: 75814
+  },
+  {
+    id: "US-KY",
+    value: 13765
+  },
+  {
+    id: "US-MD",
+    value: 34315
+  },
+  {
+    id: "US-VA",
+    value: 61426
+  },
+  {
+    id: "US-DC",
+    value: 2558
+  },
+  {
+    id: "US-DE",
+    value: 3124
+  },
+  {
+    id: "US-TX",
+    value: 237637
+  },
+  {
+    id: "US-WA",
+    value: 50480
+  },
+  {
+    id: "US-OR",
+    value: 42565
+  },
+  {
+    id: "US-AL",
+    value: 22063
+  },
+  {
+    id: "US-TN",
+    value: 42464
+  },
+  {
+    id: "US-NC",
+    value: 108916
+  },
+  {
+    id: "US-MN",
+    value: 40000
+  },
+  {
+    id: "US-KS",
+    value: 5486
+  },
+  {
+    id: "US-OK",
+    value: 36183
+  },
+  {
+    id: "US-LA",
+    value: 38143
+  },
+  {
+    id: "US-CO",
+    value: 26916
+  },
+  {
+    id: "US-UT",
+    value: 23212
+  },
+  {
+    id: "US-AZ",
+    value: 43411
+  },
+  {
+    id: "US-NM",
+    value: 3889
+  },
+  {
+    id: "US-NV",
+    value: 7389
+  },
+  {
+    id: "US-VT",
+    value: 418
+  },
+  {
+    id: "US-MS",
+    value: 4586
+  },
+  {
+    id: "US-AR",
+    value: 1019
+  },
+  {
+    id: "US-MT",
+    value: 434
+  },
+  {
+    id: "US-ME",
+    value: 1580
+  },
+  {
+    id: "US-ND",
+    value: 37
+  },
+  {
+    id: "US-WY",
+    value: 438
+  },
+  {
+    id: "US-ID",
+    value: 1352
+  },
+  {
+    id: "US-SD",
+    value: 44
+  }
+]
+
+
+var items = Object.keys(polygonSeries.data).map(function(key) {
+  return [key, polygonSeries.data[key]]
+});
+
+// Sort the array based on the second element
+items.sort(function(first, second) {
+  return second[1] - first[1];
+})
+
+console.log(items.slice(0, 5));
+console.log(items.slice(Math.max(polygonSeries.data - 5, 1)))
+
+
+// var topValues = polygonSeries.sort((a,b) => b-a).slice(0,5);
+// console.log(topValues); // [ 1, 2, 3, 8, 12 ]
+// topFive = []
+// for (i =0; i<polygonSeries.data; i--) {
+  
+// }
+
+
+
+
+// Set heatmap values for each state
+
+
+// d3.csv("US_Accidents_May19.csv", function(data){
+//     var data = d3.nest().key(
+//         function(d) {return d.State;}
+//     )
+//     .rollup(function(d){
+//         return d3.sum(d, function(g) {return 1;})
+//     }).entries(data)
+//     console.log(data)
+//     var dict = [];
+    
+
+//     data.forEach(addToPolygonSeries);
+//     function addToPolygonSeries(v, index, array){
+//       var idString = "US-" + v.key;
+//       var numberOfAccidents = v.value;
+//       dict.push({
+//         id: idString,
+//         value: numberOfAccidents
+//       })
+//     }
+//     console.log(dict);
+//     polygonSeries.data = dict;
+//     console.log(polygonSeries.data);
+// })
+
+
+// Set up heat legend
+let heatLegend = chart.createChild(am4maps.HeatLegend);
+heatLegend.series = polygonSeries;
+heatLegend.align = "right";
+heatLegend.valign = "bottom";
+heatLegend.width = am4core.percent(20);
+heatLegend.marginRight = am4core.percent(4);
+heatLegend.minValue = 0;
+heatLegend.maxValue = 500000;
+
+// Set up custom heat map legend labels using axis ranges
+var minRange = heatLegend.valueAxis.axisRanges.create();
+minRange.value = heatLegend.minValue;
+minRange.label.text = "Little";
+var maxRange = heatLegend.valueAxis.axisRanges.create();
+maxRange.value = heatLegend.maxValue;
+maxRange.label.text = "A lot!";
+
+// Blank out internal heat legend value axis labels
+heatLegend.valueAxis.renderer.labels.template.adapter.add("text", function(labelText) {
+  return "";
+});
+
+// Configure series tooltip
+var polygonTemplate = polygonSeries.mapPolygons.template;
+polygonTemplate.tooltipText = "{name}: {value}";
+polygonTemplate.nonScalingStroke = true;
+polygonTemplate.strokeWidth = 0.5;
+
+// Create hover state and set alternative fill color
+var hs = polygonTemplate.states.create("hover");
+hs.properties.fill = am4core.color("#ff0000");
+
+}); // end am4core.ready()
+</script>
+</head>
+<body>
+<br /><br />
+<h3 class="text-center">Top 5 States with a lot of accidents</h3>
+<div class="row d-flex justify-content-center">
+
+  <!--Grid column-->
+  <div class="col-md-6">
+
+<div class="table-responsive table-striped">
+  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">State</th>
+          <th scope="col" class="text-right">Number of accidents</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>California</td>
+          <td class="text-right">484,706</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Texas</td>
+          <td class="text-right">237,637</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>Florida</td>
+          <td class="text-right">177,490</td>
+        </tr>
+        <tr>
+          <th scope="row">4</th>
+          <td>North Carolina</td>
+          <td class="text-right">108,916</td>
+        </tr>
+        <tr>
+          <th scope="row">5</th>
+          <td>Georgia</td>
+          <td class="text-right">66,637</td>
+        </tr>
+      </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+</body>
+</html>
