@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+  <script type="text/javascript">
+  window.onload = function () {
+    var total = [];
+    var chart = new CanvasJS.Chart("chartContainer",
+      {
+        
+          title:{
+            text: "Number of Accidents Happened per Month"
+          },
+          axisX:{  
+    //Try Changing to MMMM
+                  
+                  valueFormatString: "MMMM",
+                  lineColor: "#369EAD",
+                  indexLabelFontColor: "#5A5757",
+		              indexLabelPlacement: "outside",
+          },
+
+          axisY: {
+              minimum: 130000,
+              maximum: 218000,
+              valueFormatString: "#,##0.##"
+          },
+
+          data: [
+          {        
+            type: "column",
+            lineThickness: 2,
+            dataPoints: [
+              /*
+              2016-02-01,19.8647
+              2016-03-01,20.7413
+              2016-04-01,13.5194
+              2016-05-01,13.5194
+              2016-06-01,14.4535
+              2016-07-01,15.4732
+              2016-08-01,21.3678
+              2016-09-01,20.4769
+              2016-10-01,21.7722
+              2016-11-01,21.7165
+              2016-12-01,20.1348
+              2016-01-01,20.9963
+              */
+              {x: new Date(2016, 0, 1), y: 209963, indexLabel: '209,963'},
+              {x: new Date(2016, 1, 1), y: 198647, indexLabel: '198,647'},
+              {x: new Date(2016, 2, 1), y: 207413, indexLabel: '207,413'},
+              {x: new Date(2016, 3, 1), y: 138773, indexLabel: '138,773'},
+              {x: new Date(2016, 4, 1), y: 135194, indexLabel: '135,194'},
+              {x: new Date(2016, 5, 1), y: 144535, indexLabel: '144,535'},
+              {x: new Date(2016, 6, 1), y: 154732, indexLabel: '154,732'},
+              {x: new Date(2016, 7, 1), y: 213678, indexLabel: '213,678'},
+              {x: new Date(2016, 8, 1), y: 204769, indexLabel: '204,769'},
+              {x: new Date(2016, 9, 1), y: 217722, indexLabel: '217,722'},
+              {x: new Date(2016, 10, 1), y: 214165, indexLabel: '214,165'},
+              {x: new Date(2016, 11, 1), y: 201348, indexLabel: '201,348'},
+            ]
+          }  
+          ]
+    });
+    /*
+    d3.csv("bar-data.csv", function(error, data) {
+        data.forEach(function(d) {
+            var passed = 0;
+            var curr_date = new Date(d.End_Time);
+            console.log('Loaded data', d.Accidents);
+            var index = curr_date.getMonth();
+            //chart.options.data[0].dataPoints[index].y = chart.options.data[0].dataPoints[index].y;
+        });
+        chart.render()
+    });
+    */
+    chart.render()
+  }
+  
+</script>
+
+</head>
+<body>
+  <div id="chartContainer" style="height: 300px; width: 100%;">
+  </div>
+</body>
+</html>
